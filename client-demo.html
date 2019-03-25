@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title> Notifications Client Demo </title>
+    <script src="http://localhost:3000/socket.io/socket.io.js"></script>
+    <script src="node_modules/engine.io/lib/server.js"></script>
+</head>
+<body>
+    <!-- Logs are shown here -->
+    <div id="logs" style="white-space: pre"></div>
+
+    <script>
+        "use strict";
+
+        const notifyServiceHost = "localhost:3020";
+        const notifyServiceSocketIoPath = "/api/notify/v1/socket.io";
+        const notifyServicePublishPath = "/v1/debug-publish";
+
+        function log(text) {
+            document.getElementById("logs").appendChild(document.createTextNode(text + "\n"));
+        }
+
+        // Connect to server - via socket.io
+        try {
+            const socket = io(
+                'http://localhost:3000',
+                {
+                    transportOptions: {
+                        polling: {
+                            extraHeaders: {
+                                'Authorization': 'STUB AUTHORIZATION FOR DEMO'
+                            }
+                        }
+                    }
+                });
+
+            // Listen to standard events.
+            for (const eventType of ["connect", "connect_error", "connect_timeout", "error", "disconnect", "reconnect_attempt", "reconnecting", "reconnect_error", "reconnect_failed"]) {
+                socket.on(eventType, (arg) => {
+                    log(`Event "${eventType}":   ${arg ? JSON.stringify(arg) : ""}`);
+                });
+            }
+
+        } catch(reason) {
+            log(`Failed to use socket.io: ${reason}`);
+            throw reason;
+        }
+
+    </script>
+</body>
+</html>
